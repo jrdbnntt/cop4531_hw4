@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.6)
-project(cop4531_hw4)
+project(cop4531_a2b)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp)
-add_executable(cop4531_hw4 ${SOURCE_FILES})
+add_subdirectory(src)
+add_subdirectory(test)
