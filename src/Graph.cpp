@@ -2,48 +2,43 @@
  * Graph implementation
  */
 #include <vector>
+#include <unordered_map>
 #include "Vertex.h"
 #include "Graph.h"
 
 using namespace std;
 
 ostream &operator<<(ostream &os, const Graph &graph) {
-    for (vector<Vertex *>::const_iterator it = graph.vertices.begin(); it != graph.vertices.end(); ++it) {
-        os << **it << '\n';
+    for (unordered_map<string, Vertex *>::const_iterator it = graph.vertices.begin(); it != graph.vertices.end(); ++it) {
+        os << *(it->second) << '\n';
     }
     return os;
 }
 
 Graph::~Graph() {
     // Cleanup vertices
-    for (vector<Vertex *>::iterator it = vertices.begin(); it != vertices.end(); ++it) {
-        delete *it;
+    for (unordered_map<string, Vertex *>::const_iterator it = vertices.begin(); it != vertices.end(); ++it) {
+        delete it->second;
     }
 }
 
 Vertex *Graph::insertOrGet(string name) {
-    // TODO make this actually sorted
-    Vertex *v = nullptr;
-    Vertex *u;
-
-    // Find it if exists
-    for (vector<Vertex *>::iterator it = vertices.begin(); it != vertices.end(); ++it) {
-        u = *it;
-        if (u->getName() == name) {
-            v = u;
-            break;
-        }
-    }
+    Vertex *v = get(name);
 
     if (v == nullptr) {
         // Not found, create it
         v = new Vertex(name);
-        vertices.push_back(v);
+        vertices[name] = v;
     }
 
     return v;
 }
 
-const vector<Vertex *>& Graph::getVertices() {
+const unordered_map<string, Vertex *>& Graph::getVertices() {
     return vertices;
+}
+
+Vertex * Graph::get(string name) {
+    unordered_map<string, Vertex *>::const_iterator it = vertices.find(name);
+    return it == vertices.end()? nullptr : it->second;
 }

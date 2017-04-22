@@ -33,12 +33,16 @@ void Vertex::addAdjacentEdge(Vertex *vertex, double weight) {
     adjacencyList.push_back(edge);
 }
 
-const string& Vertex::getName() {
+const string& Vertex::getName() const {
     return name;
 }
 
 const vector<AdjacentEdge *>& Vertex::getAdjacencyList() const {
     return adjacencyList;
+}
+
+bool Vertex::visited() const {
+    return label >= 0;
 }
 
 

@@ -36,20 +36,27 @@ public:
      */
 //    friend bool operator<(const Vertex &v1, const Vertex &v2);
 
-    Vertex(string &name) : name(name), label(-1.0) {}
+    Vertex(string &name) : name(name), label(-1.0) {
+        prev = nullptr;
+    }
     ~Vertex();
 
     void addAdjacentEdge(Vertex *vertex, double weight);
 
-    const string& getName();
+    const string& getName() const;
     const vector<AdjacentEdge *>& getAdjacencyList() const;
+    bool visited() const;
+
+    // Weight tracking label, updated as the route is found
+    double label;
+
+    // Previous vertex for tracking shortest path. Null if origin or not visited
+    Vertex *prev;
+    bool final;
 
 private:
     string name;
     vector<AdjacentEdge *> adjacencyList;
-
-    // Weight tracking label, updated as the route is found
-    double label;
 };
 
 

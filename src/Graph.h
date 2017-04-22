@@ -1,6 +1,7 @@
 
 #include <vector>
 #include <iostream>
+#include <unordered_map>
 #include "Vertex.h"
 
 using namespace std;
@@ -26,11 +27,16 @@ public:
      */
     Vertex * insertOrGet(string name);
 
-    const vector<Vertex *>& getVertices();
+    /**
+     * Searches the vertices for a vertex with a matching name. Will return nullptr if not found.
+     */
+    Vertex * get(string name);
+
+    const unordered_map<string, Vertex *>& getVertices();
 
 private:
     // Known vertices in the graph, sorted by name
-    vector<Vertex *> vertices;
+    unordered_map<string, Vertex *> vertices;
 
 };
 
