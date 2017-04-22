@@ -21,6 +21,11 @@ ostream& operator<<(ostream &os, const Vertex &vertex) {
     return os;
 }
 
+bool Vertex::operator<(const Vertex *&v2) const {
+    return label < v2->label;
+}
+
+
 Vertex::~Vertex() {
     // Clean up edges
     for (vector<AdjacentEdge *>::iterator it = adjacencyList.begin(); it != adjacencyList.end(); ++it) {
@@ -41,9 +46,6 @@ const vector<AdjacentEdge *>& Vertex::getAdjacencyList() const {
     return adjacencyList;
 }
 
-bool Vertex::visited() const {
-    return label >= 0;
-}
 
 
 

@@ -2,6 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <queue>
+#include <unordered_map>
 #include "Vertex.h"
 #include "Graph.h"
 
@@ -21,7 +23,6 @@ int main(int argc, const char **argv) {
     // Read the graph
     Graph graph;
     readGraph(graph, argv[1]);
-    cout << graph; // TODO remove
 
     // Check start & end
     Vertex *start = graph.get(argv[2]);
@@ -108,9 +109,51 @@ void printResults(Vertex *end) {
     cout << reversePath[0]->getName() << '\n';
 }
 
+
 /**
- * Preforms the Dijkstra algorthim on the graph to find the shortest path
+ * Preforms the Dijkstra algorithm on the graph to find the shortest path
  */
 void dijkstra(Graph &graph, Vertex *start) {
+    Vertex *v, *u;
+    AdjacentEdge *edge;
+    vector<AdjacentEdge *> adj;
+    double newTotal;
 
+    // Initialize start
+    start->label = 0;
+
+    // Initialize priority queue
+    priority_queue<Vertex *> q;
+    unordered_map<string, Vertex *> vertices = graph.getVertices();
+    for (unordered_map<string, Vertex *>::iterator it = vertices.begin(); it != vertices.end(); ++it) {
+        q.push((*it).second);
+    }
+
+    while (q.size() != 0) {
+        // Extract next in queue
+        v = q.top();
+        q.pop();
+
+        // Update neighbors
+        adj = v->getAdjacencyList();
+        for (vector<AdjacentEdge *>::iterator it = adj.begin(); it != adj.end(); ++it) {
+            edge = *it;
+            u = edge->vertex;
+
+            if (u->final) {
+                continue;
+            }
+
+            newTotal = v->label + edge->weight;
+            if (u->label > newTotal) {
+                // Relax the adj vertex
+                u->label = newTotal;
+                u->prev = v;
+
+                // TODO update queue (Fib. heap)? Current method results in double checking b/c cannot remove
+                q.push(u);
+            }
+        }
+
+    }
 }

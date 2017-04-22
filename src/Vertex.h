@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
@@ -34,9 +35,9 @@ public:
     /**
      * Comparison for sorting. Uses the name.
      */
-//    friend bool operator<(const Vertex &v1, const Vertex &v2);
+    bool operator<(const Vertex *&v2) const;
 
-    Vertex(string &name) : name(name), label(-1.0) {
+    Vertex(string &name) : name(name), label(numeric_limits<double>::max()) {
         prev = nullptr;
     }
     ~Vertex();
@@ -45,7 +46,6 @@ public:
 
     const string& getName() const;
     const vector<AdjacentEdge *>& getAdjacencyList() const;
-    bool visited() const;
 
     // Weight tracking label, updated as the route is found
     double label;
