@@ -112,9 +112,18 @@ void printResults(Vertex *end) {
 
 /**
  * Preforms the Dijkstra algorithm on the graph to find the shortest path
+ *
+ * The main priority queue is contains proxy pointers which point to pointers that point to Vertices. This is to get
+ * around the fact that the PQ cannot efficiently remove elements or rearrange itself once a Vertex's label has been
+ * updated. Instead of removing it, I am swapping the real pointer out for a fake one with the same label value and
+ * just push the real pointer with a new proxy, which should be placed in the correct order. When the proxy with the
+ * fake pointer is retrieved, it is simply ignored and removed so that the queue can move on.
+ *
+ * To be honest I thought this was a ridiculous idea that I never thought I could get to work. But then it worked! :D
  */
 void dijkstra(Graph &graph, Vertex *start) {
-    Vertex *v, *u;
+    Vertex **proxy;
+    Vertex *v, *u, *f;
     AdjacentEdge *edge;
     vector<AdjacentEdge *> adj;
     double newTotal;
@@ -122,38 +131,68 @@ void dijkstra(Graph &graph, Vertex *start) {
     // Initialize start
     start->label = 0;
 
-    // Initialize priority queue
-    priority_queue<Vertex *> q;
+    // Initialize proxy pointers to enable copy + insert (mimics priority queue deletion). 1:1 rel w/ vertex, null=old
     unordered_map<string, Vertex *> vertices = graph.getVertices();
-    for (unordered_map<string, Vertex *>::iterator it = vertices.begin(); it != vertices.end(); ++it) {
-        q.push((*it).second);
+
+    // Initialize priority queue with proxies
+    priority_queue<Vertex **, vector<Vertex **>, CompareVertexProxy> q;
+
+    for (unordered_map<string, Vertex *>::const_iterator it = vertices.begin(); it != vertices.end(); ++it) {
+        v = it->second;
+        proxy = new Vertex*(v);
+        v->proxy = proxy;
+        q.push(proxy);
     }
 
     while (q.size() != 0) {
-        // Extract next in queue
-        v = q.top();
+        // Extract next proxy in queue
+        proxy = q.top();
         q.pop();
+        v = *proxy;
 
-        // Update neighbors
+        // Deallocate old proxy
+        delete proxy;
+
+        // Replaced with a fake?
+        if (v->proxy == nullptr) {
+            // Deallocate fake
+            delete v;
+            continue;
+        }
+
+        // Not a fake, update neighbors
         adj = v->getAdjacencyList();
         for (vector<AdjacentEdge *>::iterator it = adj.begin(); it != adj.end(); ++it) {
             edge = *it;
             u = edge->vertex;
 
             if (u->final) {
+                // This adjacent vertex has already been calculated in a previous iteration
                 continue;
             }
 
             newTotal = v->label + edge->weight;
             if (u->label > newTotal) {
+                // Swap the vertex the proxy already in the queue has with a fake one to be ignored, but still has val
+                f = new Vertex(u->getName());
+                f->label = u->label;
+                f->proxy = nullptr;
+                *(u->proxy) = f;
+
+                // Create a new proxy to push
+                proxy = new Vertex*(u);
+                u->proxy = proxy;
+
                 // Relax the adj vertex
                 u->label = newTotal;
                 u->prev = v;
 
-                // TODO update queue (Fib. heap)? Current method results in double checking b/c cannot remove
-                q.push(u);
+                // Push to queue
+                q.push(proxy);
             }
         }
 
+        v->final = true;
     }
+
 }

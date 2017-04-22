@@ -1,6 +1,6 @@
 # Makefile
 
-GCC=g++ -std=c++11
+GCC=g++ -std=c++11 -O3
 EXE=dijkstra
 RELEASE_NAME=proj4
 RELEASE_FILES=\

@@ -37,7 +37,7 @@ public:
      */
     bool operator<(const Vertex *&v2) const;
 
-    Vertex(string &name) : name(name), label(numeric_limits<double>::max()) {
+    Vertex(const string &name) : name(name), label(numeric_limits<double>::max()) {
         prev = nullptr;
     }
     ~Vertex();
@@ -52,11 +52,22 @@ public:
 
     // Previous vertex for tracking shortest path. Null if origin or not visited
     Vertex *prev;
+
+    // Pointer to valid proxy in the priority queue
+    Vertex **proxy;
+
     bool final;
 
 private:
     string name;
     vector<AdjacentEdge *> adjacencyList;
+};
+
+
+struct CompareVertexProxy {
+    bool operator()(Vertex **v1, Vertex **v2) {
+        return (*v1)->label > (*v2)->label;
+    }
 };
 
 

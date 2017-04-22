@@ -1,1 +1,1 @@
-add_executable(dijkstra.exe dijkstra.cpp Graph.cpp Vertex.cpp)
+add_executable(dijkstra dijkstra.cpp Graph.cpp Vertex.cpp)
