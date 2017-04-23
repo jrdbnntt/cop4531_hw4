@@ -79,7 +79,9 @@ def run():
 
     # Print in correct input format
     print(len(airport_lst))
+    edges = 0
     for ap in airport_lst:
         print(ap)
-
+        edges += len(ap.adj)
+    print("Vertices: {}  Edges: {}".format(len(airport_lst), edges))
 run()

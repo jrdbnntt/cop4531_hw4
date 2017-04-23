@@ -10,7 +10,7 @@
 using namespace std;
 
 void readGraph(Graph &graph, const char *fileName);
-void printResults(Vertex *end);
+bool printResults(Vertex *start, Vertex *end);
 void dijkstra(Graph &graph, Vertex *start);
 
 int main(int argc, const char **argv) {
@@ -29,12 +29,12 @@ int main(int argc, const char **argv) {
     Vertex *end = graph.get(argv[3]);
 
     if (start == nullptr) {
-        cerr << "Error: start node '" << argv[2] << "' not in graph\n";
+        cerr << "Error: start vertex '" << argv[2] << "' not in graph\n";
         exit(2);
     }
 
     if (end == nullptr) {
-        cerr << "Error: end node '" << argv[3] << "' not in graph\n";
+        cerr << "Error: end vertex '" << argv[3] << "' not in graph\n";
         exit(2);
     }
 
@@ -42,7 +42,13 @@ int main(int argc, const char **argv) {
     dijkstra(graph, start);
 
     // Print shortest path
-    printResults(end);
+    if (!printResults(start, end)) {
+        // Unable to print results due to disconnected start/end
+        cerr << "Error: Start vertex '" << start->getName() << "' and End vertex '"
+             << end->getName() << "' are not connected\n";
+        cerr << "Start: " << *start << '\n';
+        cerr << "End:   " << *end << '\n';
+    }
 
     return 0;
 }
@@ -90,8 +96,8 @@ void readGraph(Graph &graph, const char *fileName) {
 /**
  * Print the total weight and then the path's names in order.
  */
-void printResults(Vertex *end) {
-    cout << end->label << '\n';
+bool printResults(Vertex *start, Vertex *end) {
+    double total = end->label;
 
     // Build list starting from back
     vector<Vertex *> reversePath;
@@ -102,11 +108,18 @@ void printResults(Vertex *end) {
         reversePath.push_back(end);
     }
 
+    if (end != start){
+        return false;
+    }
+
     // Print from start to end
+    cout << total << '\n';
     for (vector<Vertex *>::reverse_iterator rit = reversePath.rbegin(); rit != reversePath.rend()-1; ++rit) {
         cout << (*rit)->getName() << " ";
     }
     cout << reversePath[0]->getName() << '\n';
+
+    return true;
 }
 
 
