@@ -93,3 +93,4 @@ test/data
 test/airport/data
 *.pyc
 venv
+*.tar
