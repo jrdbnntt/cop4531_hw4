@@ -90,5 +90,6 @@ CTestTestfile.cmake
 cmake-build-debug
 dijkstra
 test/data
-
-
+test/airport/data
+*.pyc
+venv
