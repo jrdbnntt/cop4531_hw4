@@ -68,21 +68,22 @@ void readGraph(Graph &graph, const char *fileName) {
 
     // Get n;
     getline(inFile, line);
-    in = istringstream(line);
+    in.str(line);
     in >> n;
 
     // Read each line, extract the vector labels, store rest of line that contains edges for later
     for (int i = 0; i < n; ++i) {
         getline(inFile, line);
-        in = istringstream(line);
+        istringstream ins(line);
+
 
         // Get the vector
-        in >> name;
+        ins >> name;
         v = graph.insertOrGet(name);
 
         // Build adjacency list
-        while (in >> name) {
-            in >> weight;
+        while (ins >> name) {
+            ins >> weight;
             u = graph.insertOrGet(name);
             v->addAdjacentEdge(u, weight);
         }
