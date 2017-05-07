@@ -39,6 +39,8 @@ public:
 
     Vertex(const string &name) : name(name), label(numeric_limits<double>::max()) {
         prev = nullptr;
+        proxy = nullptr;
+        final = false;
     }
     ~Vertex();
 
